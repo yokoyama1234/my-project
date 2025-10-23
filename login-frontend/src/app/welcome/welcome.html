@@ -1,0 +1,26 @@
+<h2>ようこそ、{{ userId }} さん</h2>
+
+<button (click)="logout()">ログアウト</button>
+
+<div *ngIf="error" class="error-message">{{ error }}</div>
+
+<table *ngIf="products.length > 0">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>名前</th>
+      <th>価格</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let p of products">
+      <td>{{ p.id }}</td>
+      <td>{{ p.name }}</td>
+      <td>{{ p.price | currency:'JPY' }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="products.length === 0 && !error">
+  商品データがありません
+</div>
