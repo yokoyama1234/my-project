@@ -1,4 +1,4 @@
-package com.example.loginbackend.model;
+package com.example.loginbackend.dto;
 
 public class LoginRequest {
     private String userId;
