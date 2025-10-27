@@ -1,7 +1,7 @@
 package com.example.loginbackend;
 
 import com.example.loginbackend.controller.LoginController;
-import com.example.loginbackend.model.User;
+import com.example.loginbackend.model.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(LoginController.class)
-@AutoConfigureMockMvc(addFilters = false) 
+@AutoConfigureMockMvc(addFilters = false)
 public class LoginControllerTest {
 
     @Autowired
@@ -29,7 +29,7 @@ public class LoginControllerTest {
 
     @Test
     public void testLoginSuccess() throws Exception {
-        User request = new User();
+        LoginRequest request = new LoginRequest();
         request.setUserId(FIXED_USER);
         request.setPassword(FIXED_PASS);
 
@@ -44,7 +44,7 @@ public class LoginControllerTest {
 
     @Test
     public void testLoginFail() throws Exception {
-        User request = new User();
+        LoginRequest request = new LoginRequest();
         request.setUserId("wrong");
         request.setPassword("wrong");
 

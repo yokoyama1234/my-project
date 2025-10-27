@@ -4,12 +4,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
-public class User {
+public class LoginRequest {
 
     @Id
     private String userId;
     private String password;
-    private String name;
 
     public String getUserId() {
         return userId;
@@ -25,13 +24,5 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

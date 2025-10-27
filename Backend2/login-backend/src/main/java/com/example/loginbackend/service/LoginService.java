@@ -1,6 +1,6 @@
 package com.example.loginbackend.service;
 
-import com.example.loginbackend.model.User;
+import com.example.loginbackend.model.LoginRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,11 +11,10 @@ public class LoginService {
     private static final String FIXED_USER_ID = "user1";
     private static final String FIXED_PASSWORD = "password123";
 
-    public Optional<User> login(String userId, String password) {
+    public Optional<LoginRequest> login(String userId, String password) {
         if (FIXED_USER_ID.equals(userId) && FIXED_PASSWORD.equals(password)) {
-            User user = new User();
+            LoginRequest user = new LoginRequest();
             user.setUserId(userId);
-            user.setName("テストユーザ"); 
             return Optional.of(user);
         }
         return Optional.empty();

@@ -1,6 +1,6 @@
 package com.example.loginbackend.controller;
 
-import com.example.loginbackend.model.User;
+import com.example.loginbackend.model.LoginRequest;
 import com.example.loginbackend.dto.LoginResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class LoginController {
 
     private static final String FIXED_USER = "admin";
@@ -17,7 +16,7 @@ public class LoginController {
     private static final String SESSION_USER_KEY = "USER";
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody User request, HttpSession session) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
         if (FIXED_USER.equals(request.getUserId()) && FIXED_PASS.equals(request.getPassword())) {
             session.setAttribute(SESSION_USER_KEY, FIXED_USER);
             return ResponseEntity
