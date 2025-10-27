@@ -11,7 +11,6 @@ public class User {
     private String password;
     private String name;
 
-    // Getter / Setter
     public String getUserId() {
         return userId;
     }

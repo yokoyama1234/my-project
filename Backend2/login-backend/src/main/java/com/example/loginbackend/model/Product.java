@@ -11,7 +11,6 @@ public class Product {
         this.price = price;
     }
 
-    // getter / setter 必須
     public int getId() {
         return id;
     }

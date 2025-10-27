@@ -16,9 +16,9 @@ public class WebConfig {
                 registry.addMapping("/api/**")
                         .allowedOrigins("http://localhost:8081")
                         .allowedMethods("GET", "POST", "OPTIONS")
-                        .allowCredentials(true) // ← これが重要！
+                        .allowCredentials(true) 
                         .allowedHeaders("*")
-                        .exposedHeaders("Set-Cookie"); // ← Cookieをクライアント側に露出
+                        .exposedHeaders("Set-Cookie"); 
             }
         };
     }

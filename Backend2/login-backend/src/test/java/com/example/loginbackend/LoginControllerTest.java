@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(LoginController.class)
-@AutoConfigureMockMvc(addFilters = false) // フィルタを無効化
+@AutoConfigureMockMvc(addFilters = false) 
 public class LoginControllerTest {
 
     @Autowired
@@ -24,7 +24,6 @@ public class LoginControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // 固定値ユーザ
     private final String FIXED_USER = "admin";
     private final String FIXED_PASS = "password";
 

@@ -11,7 +11,6 @@ public class LoginResponse {
         this.userId = userId;
     }
 
-    // getter / setter
     public int getStatus() {
         return status;
     }

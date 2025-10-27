@@ -13,12 +13,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // RESTではCSRF無効
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login", "/api/products", "/h2-console/**").permitAll() // ログインとH2は無条件許可
-                        .anyRequest().authenticated() // 他は認証必須
+                        .requestMatchers("/api/login", "/api/products", "/h2-console/**").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())); // H2用
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())); 
 
         return http.build();
     }

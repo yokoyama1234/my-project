@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpSession;
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class LoginController {
 
-    // 固定値ユーザ
     private final String FIXED_USER = "admin";
     private final String FIXED_PASS = "password";
 
