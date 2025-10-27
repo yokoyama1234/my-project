@@ -2,6 +2,7 @@ package com.example.loginbackend.controller;
 
 import com.example.loginbackend.model.LoginRequest;
 import com.example.loginbackend.dto.LoginResponse;
+import com.example.loginbackend.service.LoginService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,35 +12,32 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/api")
 public class LoginController {
 
-    private static final String FIXED_USER = "admin";
-    private static final String FIXED_PASS = "password";
-    private static final String SESSION_USER_KEY = "USER";
+    private final LoginService loginService;
+
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
-        if (FIXED_USER.equals(request.getUserId()) && FIXED_PASS.equals(request.getPassword())) {
-            session.setAttribute(SESSION_USER_KEY, FIXED_USER);
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new LoginResponse(HttpStatus.OK.value(), "ログイン成功", FIXED_USER));
+        LoginRequest user = loginService.login(request.getUserId(), request.getPassword());
+        if (user != null) {
+            session.setAttribute("USER", user);
+            return ResponseEntity.ok(new LoginResponse(200, "ログイン成功", user.getName()));
         } else {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new LoginResponse(HttpStatus.UNAUTHORIZED.value(), "ユーザIDまたはパスワードが間違っています"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new LoginResponse(401, "ユーザIDまたはパスワードが間違っています"));
         }
     }
 
     @GetMapping("/me")
     public ResponseEntity<LoginResponse> me(HttpSession session) {
-        String user = (String) session.getAttribute(SESSION_USER_KEY);
+        LoginRequest user = (LoginRequest) session.getAttribute("USER");
         if (user != null) {
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new LoginResponse(HttpStatus.OK.value(), "ログイン中", user));
+            return ResponseEntity.ok(new LoginResponse(200, "ログイン中", user.getUserId()));
         } else {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new LoginResponse(HttpStatus.UNAUTHORIZED.value(), "ログインしていません"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new LoginResponse(401, "ログインしていません"));
         }
     }
 }

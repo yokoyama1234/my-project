@@ -17,13 +17,13 @@ interface Product {
   imports: [CommonModule, RouterModule, HttpClientModule]
 })
 export class WelcomeComponent implements OnInit {
-  userId: string = '';
+  name: string = '';
   products: Product[] = [];
   error = '';
 
   constructor(private router: Router, private http: HttpClient) {
     const navigation = this.router.getCurrentNavigation();
-    this.userId = navigation?.extras.state?.['userId'] || 'ゲスト';
+    this.name = navigation?.extras.state?.['name'] || 'ゲスト';
   }
 
   ngOnInit() {
