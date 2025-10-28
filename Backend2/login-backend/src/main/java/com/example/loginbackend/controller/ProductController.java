@@ -20,4 +20,15 @@ public class ProductController {
     public List<Product> getProducts() {
         return productService.getAllProducts();
     }
+
+    @PostMapping("/rollback")
+    public String testRollback() {
+        try {
+            productService.updateUserAndProductWithRollbackTest();
+            return "成功…のはずが例外が出るのでここは通らない";
+        } catch (Exception e) {
+            return "例外発生 → ロールバック成功！";
+        }
+    }
+
 }
