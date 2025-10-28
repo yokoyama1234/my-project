@@ -1,19 +1,7 @@
 package com.example.loginbackend.service;
 
-import com.example.loginbackend.mapper.UserMapper;
 import com.example.loginbackend.model.LoginUser;
-import org.springframework.stereotype.Service;
 
-@Service
-public class LoginService {
-
-    private final UserMapper userMapper;
-
-    public LoginService(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
-
-    public LoginUser login(String userId, String password) {
-        return userMapper.findByUserIdAndPassword(userId, password);
-    }
+public interface LoginService {
+    LoginUser login(String userId, String password);
 }
