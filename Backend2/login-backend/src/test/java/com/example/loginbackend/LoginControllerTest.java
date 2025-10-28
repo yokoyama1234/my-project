@@ -1,7 +1,7 @@
 package com.example.loginbackend;
 
 import com.example.loginbackend.controller.LoginController;
-import com.example.loginbackend.model.LoginRequest;
+import com.example.loginbackend.model.LoginUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class LoginControllerTest {
 
     @Test
     public void testLoginSuccess() throws Exception {
-        LoginRequest request = new LoginRequest();
+        LoginUser request = new LoginUser();
         request.setUserId(FIXED_USER);
         request.setPassword(FIXED_PASS);
 
@@ -44,7 +44,7 @@ public class LoginControllerTest {
 
     @Test
     public void testLoginFail() throws Exception {
-        LoginRequest request = new LoginRequest();
+        LoginUser request = new LoginUser();
         request.setUserId("wrong");
         request.setPassword("wrong");
 

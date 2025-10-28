@@ -15,10 +15,10 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
                         .allowedOrigins("http://localhost:8081")
-                        .allowedMethods("GET", "POST", "OPTIONS")
-                        .allowCredentials(true) 
+                        .allowedMethods("GET", "POST")
+                        .allowCredentials(true)
                         .allowedHeaders("*")
-                        .exposedHeaders("Set-Cookie"); 
+                        .exposedHeaders("Set-Cookie");
             }
         };
     }
