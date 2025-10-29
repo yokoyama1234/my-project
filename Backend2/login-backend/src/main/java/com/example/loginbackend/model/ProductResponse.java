@@ -1,11 +1,11 @@
 package com.example.loginbackend.model;
 
-public class Product {
+public class ProductResponse {
     private int id;
     private String name;
     private int price;
 
-    public Product(int id, String name, int price) {
+    public ProductResponse(int id, String name, int price) {
         this.id = id;
         this.name = name;
         this.price = price;

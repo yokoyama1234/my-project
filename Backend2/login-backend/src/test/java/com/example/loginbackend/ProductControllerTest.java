@@ -1,7 +1,7 @@
 package com.example.loginbackend;
 
 import com.example.loginbackend.controller.ProductController;
-import com.example.loginbackend.model.Product;
+import com.example.loginbackend.model.ProductResponse;
 import com.example.loginbackend.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,8 +30,8 @@ class ProductControllerTest {
     void testGetProducts() throws Exception {
         when(productService.getAllProducts()).thenReturn(
                 Arrays.asList(
-                        new Product(1, "商品A", 1000),
-                        new Product(2, "商品B", 2000)));
+                        new ProductResponse(1, "商品A", 1000),
+                        new ProductResponse(2, "商品B", 2000)));
 
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())

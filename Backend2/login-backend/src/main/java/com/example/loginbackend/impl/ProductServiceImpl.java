@@ -1,11 +1,11 @@
 package com.example.loginbackend.impl;
 
 import com.example.loginbackend.mapper.ProductMapper;
-import com.example.loginbackend.mapper.UserMapper;
+import com.example.loginbackend.mapper.LoginMapper;
 import com.example.loginbackend.service.ProductService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.loginbackend.model.Product;
+import com.example.loginbackend.model.ProductResponse;
 
 import java.util.List;
 
@@ -13,15 +13,15 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
-    private final UserMapper userMapper;
+    private final LoginMapper userMapper;
 
-    public ProductServiceImpl(ProductMapper productMapper, UserMapper userMapper) {
+    public ProductServiceImpl(ProductMapper productMapper, LoginMapper userMapper) {
         this.productMapper = productMapper;
         this.userMapper = userMapper;
     }
 
     @Override
-    public List<Product> getAllProducts() {
+    public List<ProductResponse> getAllProducts() {
         return productMapper.findAll();
     }
 

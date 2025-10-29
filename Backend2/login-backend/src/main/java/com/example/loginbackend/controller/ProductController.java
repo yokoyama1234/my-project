@@ -1,6 +1,6 @@
 package com.example.loginbackend.controller;
 
-import com.example.loginbackend.model.Product;
+import com.example.loginbackend.model.ProductResponse;
 import com.example.loginbackend.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getProducts(HttpSession session) {
+    public List<ProductResponse> getProducts(HttpSession session) {
         // セッション確認
         if (session.getAttribute("USER") == null) {
             throw new RuntimeException("ログインしていません");

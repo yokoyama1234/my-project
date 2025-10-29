@@ -1,0 +1,7 @@
+cors:
+  mapping: "/api/**"
+  allowed-origins:
+    - "http://localhost:8081"
+  allowed-methods:
+    - "GET"
+    - "POST"
