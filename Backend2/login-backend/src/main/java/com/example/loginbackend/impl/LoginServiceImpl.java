@@ -1,7 +1,7 @@
-package com.example.loginbackend.service.impl;
+package com.example.loginbackend.impl;
 
 import com.example.loginbackend.mapper.UserMapper;
-import com.example.loginbackend.model.LoginUser;
+import com.example.loginbackend.model.LoginRequest;
 import com.example.loginbackend.service.LoginService;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public LoginUser login(String userId, String password) {
+    public LoginRequest login(String userId, String password) {
         return userMapper.findByUserIdAndPassword(userId, password);
     }
 }

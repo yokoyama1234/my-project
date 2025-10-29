@@ -2,8 +2,8 @@ package com.example.loginbackend.controller;
 
 import com.example.loginbackend.model.Product;
 import com.example.loginbackend.service.ProductService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -17,7 +17,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getProducts() {
+    public List<Product> getProducts(HttpSession session) {
+        // セッション確認
+        if (session.getAttribute("USER") == null) {
+            throw new RuntimeException("ログインしていません");
+        }
         return productService.getAllProducts();
     }
 

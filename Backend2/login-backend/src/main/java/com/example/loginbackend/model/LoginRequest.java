@@ -1,6 +1,6 @@
 package com.example.loginbackend.model;
 
-public class LoginUser {
+public class LoginRequest {
     private Integer id;
     private String userId;
     private String password;

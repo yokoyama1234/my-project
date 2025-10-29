@@ -1,4 +1,4 @@
-package com.example.loginbackend.dto;
+package com.example.loginbackend.model;
 
 public class LoginResponse {
     private int status;

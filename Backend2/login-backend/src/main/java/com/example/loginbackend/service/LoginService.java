@@ -1,7 +1,7 @@
 package com.example.loginbackend.service;
 
-import com.example.loginbackend.model.LoginUser;
+import com.example.loginbackend.model.LoginRequest;
 
 public interface LoginService {
-    LoginUser login(String userId, String password);
+    LoginRequest login(String userId, String password);
 }

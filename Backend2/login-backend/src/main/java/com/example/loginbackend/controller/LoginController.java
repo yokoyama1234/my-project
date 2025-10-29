@@ -1,7 +1,7 @@
 package com.example.loginbackend.controller;
 
-import com.example.loginbackend.model.LoginUser;
-import com.example.loginbackend.dto.LoginResponse;
+import com.example.loginbackend.model.LoginRequest;
+import com.example.loginbackend.model.LoginResponse;
 import com.example.loginbackend.service.LoginService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginUser request, HttpSession session) {
-        LoginUser user = loginService.login(request.getUserId(), request.getPassword());
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
+        LoginRequest user = loginService.login(request.getUserId(), request.getPassword());
         if (user != null) {
             session.setAttribute("USER", user);
             return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), "ログイン成功", user.getName()));
@@ -32,9 +32,9 @@ public class LoginController {
 
     @GetMapping("/me")
     public ResponseEntity<LoginResponse> me(HttpSession session) {
-        LoginUser user = (LoginUser) session.getAttribute("USER");
+        LoginRequest user = (LoginRequest) session.getAttribute("USER");
         if (user != null) {
-            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), "ログイン中", user.getUserId()));
+            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), "ログイン中", user.getName()));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new LoginResponse(HttpStatus.UNAUTHORIZED.value(), "ログインしていません"));
