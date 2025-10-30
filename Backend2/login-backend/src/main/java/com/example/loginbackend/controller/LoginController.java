@@ -25,7 +25,10 @@ public class LoginController {
         if (user != null) {
             session.setAttribute("USER", user);
             String msg = messageSource.getMessage("login.success", null, Locale.JAPANESE);
-            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), msg, user.getName()));
+
+            String displayName = user.getName() != null ? user.getName() : user.getUserId();
+
+            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), msg, displayName));
         } else {
             String msg = messageSource.getMessage("login.failure", null, Locale.JAPANESE);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -38,7 +41,8 @@ public class LoginController {
         LoginRequest user = (LoginRequest) session.getAttribute("USER");
         if (user != null) {
             String msg = messageSource.getMessage("login.already_logged_in", null, Locale.JAPANESE);
-            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), msg, user.getName()));
+            String displayName = user.getName() != null ? user.getName() : user.getUserId();
+            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), msg, displayName));
         } else {
             String msg = messageSource.getMessage("login.not_logged_in", null, Locale.JAPANESE);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

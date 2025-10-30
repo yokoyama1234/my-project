@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class LoginResponse {
     private int status;
     private String message;
-    private String userId;
+    private String name;
 
     public LoginResponse(int status, String message) {
         this.status = status;

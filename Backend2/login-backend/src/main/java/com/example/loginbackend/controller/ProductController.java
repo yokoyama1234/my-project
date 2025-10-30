@@ -1,12 +1,13 @@
 package com.example.loginbackend.controller;
 
+import com.example.loginbackend.exception.UnauthorizedException;
 import com.example.loginbackend.model.ProductResponse;
 import com.example.loginbackend.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import org.springframework.context.MessageSource;
+import java.util.List;
 import java.util.Locale;
 
 @RestController
@@ -21,7 +22,7 @@ public class ProductController {
     public List<ProductResponse> getProducts(HttpSession session, Locale locale) {
         if (session.getAttribute("USER") == null) {
             String msg = messageSource.getMessage("error.not_logged_in", null, locale);
-            throw new RuntimeException(msg);
+            throw new UnauthorizedException(msg);
         }
         return productService.getAllProducts();
     }

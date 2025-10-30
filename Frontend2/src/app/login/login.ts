@@ -7,7 +7,7 @@ import { Router, RouterModule } from '@angular/router';
 interface LoginResponse {
   status: number;
   message: string;
-  userId?: string; // ここにDBから取得したnameを入れる
+  name?: string; // ここにDBから取得したnameを入れる
 }
 
 @Component({
@@ -34,9 +34,9 @@ export class LoginComponent {
     ).subscribe({
       next: (res: HttpResponse<LoginResponse>) => {
         const body = res.body;
-        if (body && body.status === 200 && body.userId) {
+        if (body && body.status === 200 && body.name) {
           // DBから取得したnameを渡す
-          this.router.navigate(['/welcome'], { state: { name: body.userId } });
+          this.router.navigate(['/welcome'], { state: { name: body.name } });
         } else {
           this.message = body?.message || '予期せぬレスポンスです';
         }
