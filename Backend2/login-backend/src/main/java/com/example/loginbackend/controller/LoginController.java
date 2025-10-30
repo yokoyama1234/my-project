@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.context.MessageSource;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api")
@@ -15,16 +17,19 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
 
     private final LoginService loginService;
+    private final MessageSource messageSource;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
         LoginRequest user = loginService.login(request.getUserId(), request.getPassword());
         if (user != null) {
             session.setAttribute("USER", user);
-            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), "ログイン成功", user.getName()));
+            String msg = messageSource.getMessage("login.success", null, Locale.JAPANESE);
+            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), msg, user.getName()));
         } else {
+            String msg = messageSource.getMessage("login.failure", null, Locale.JAPANESE);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new LoginResponse(HttpStatus.UNAUTHORIZED.value(), "ユーザIDまたはパスワードが間違っています"));
+                    .body(new LoginResponse(HttpStatus.UNAUTHORIZED.value(), msg));
         }
     }
 
@@ -32,10 +37,12 @@ public class LoginController {
     public ResponseEntity<LoginResponse> me(HttpSession session) {
         LoginRequest user = (LoginRequest) session.getAttribute("USER");
         if (user != null) {
-            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), "ログイン中", user.getName()));
+            String msg = messageSource.getMessage("login.already_logged_in", null, Locale.JAPANESE);
+            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), msg, user.getName()));
         } else {
+            String msg = messageSource.getMessage("login.not_logged_in", null, Locale.JAPANESE);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new LoginResponse(HttpStatus.UNAUTHORIZED.value(), "ログインしていません"));
+                    .body(new LoginResponse(HttpStatus.UNAUTHORIZED.value(), msg));
         }
     }
 }

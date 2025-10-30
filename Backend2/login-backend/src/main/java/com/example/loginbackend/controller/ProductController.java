@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.context.MessageSource;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/products")
@@ -13,23 +15,24 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final MessageSource messageSource;
 
     @GetMapping
-    public List<ProductResponse> getProducts(HttpSession session) {
-        // セッション確認
+    public List<ProductResponse> getProducts(HttpSession session, Locale locale) {
         if (session.getAttribute("USER") == null) {
-            throw new RuntimeException("ログインしていません");
+            String msg = messageSource.getMessage("error.not_logged_in", null, locale);
+            throw new RuntimeException(msg);
         }
         return productService.getAllProducts();
     }
 
     @PostMapping("/rollback")
-    public String testRollback() {
+    public String testRollback(Locale locale) {
         try {
             productService.updateUserAndProductWithRollbackTest();
-            return "成功…のはずが例外が出るのでここは通らない";
+            return messageSource.getMessage("rollback.unexpected", null, locale);
         } catch (Exception e) {
-            return "例外発生 → ロールバック成功！";
+            return messageSource.getMessage("rollback.success", null, locale);
         }
     }
 }
