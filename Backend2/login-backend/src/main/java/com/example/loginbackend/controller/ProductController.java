@@ -3,18 +3,16 @@ package com.example.loginbackend.controller;
 import com.example.loginbackend.model.ProductResponse;
 import com.example.loginbackend.service.ProductService;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
 
     @GetMapping
     public List<ProductResponse> getProducts(HttpSession session) {
@@ -34,5 +32,4 @@ public class ProductController {
             return "例外発生 → ロールバック成功！";
         }
     }
-
 }

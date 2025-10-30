@@ -3,22 +3,19 @@ package com.example.loginbackend.impl;
 import com.example.loginbackend.mapper.ProductMapper;
 import com.example.loginbackend.mapper.LoginMapper;
 import com.example.loginbackend.service.ProductService;
+import com.example.loginbackend.model.ProductResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.loginbackend.model.ProductResponse;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
     private final LoginMapper userMapper;
-
-    public ProductServiceImpl(ProductMapper productMapper, LoginMapper userMapper) {
-        this.productMapper = productMapper;
-        this.userMapper = userMapper;
-    }
 
     @Override
     public List<ProductResponse> getAllProducts() {
@@ -28,8 +25,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void updateUserAndProductWithRollbackTest() {
         userMapper.updateUserName(1L, "管理者１");
-
         productMapper.updateProductName(1L, "DB設定で上限10文字に設定");
-
     }
 }
