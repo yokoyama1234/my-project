@@ -1,7 +1,6 @@
 package com.example.loginbackend;
 
 import com.example.loginbackend.controller.ProductController;
-import com.example.loginbackend.exception.UnauthorizedException;
 import com.example.loginbackend.model.LoginRequest;
 import com.example.loginbackend.model.ProductResponse;
 import com.example.loginbackend.service.ProductService;
@@ -26,67 +25,67 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class ProductControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @MockBean
-    private ProductService productService;
+        @MockBean
+        private ProductService productService;
 
-    @MockBean
-    private MessageSource messageSource;
+        @MockBean
+        private MessageSource messageSource;
 
-    @Test
-    void testGetProductsLoggedIn() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        LoginRequest user = new LoginRequest();
-        user.setUserId("dummyUser");
-        user.setName("テストユーザー");
-        session.setAttribute("USER", user);
+        @Test
+        void testGetProductsLoggedIn() throws Exception {
+                MockHttpSession session = new MockHttpSession();
+                LoginRequest user = new LoginRequest();
+                user.setUserId("dummyUser");
+                user.setName("テストユーザー");
+                session.setAttribute("USER", user);
 
-        when(productService.getAllProducts()).thenReturn(
-                Arrays.asList(
-                        new ProductResponse(1, "商品A", 1000),
-                        new ProductResponse(2, "商品B", 2000)));
+                when(productService.getAllProducts()).thenReturn(
+                                Arrays.asList(
+                                                new ProductResponse(1, "商品A", 1000),
+                                                new ProductResponse(2, "商品B", 2000)));
 
-        mockMvc.perform(get("/api/products").session(session).locale(Locale.JAPANESE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("商品A"))
-                .andExpect(jsonPath("$[1].price").value(2000));
-    }
+                mockMvc.perform(get("/api/products").session(session).locale(Locale.JAPANESE))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$[0].name").value("商品A"))
+                                .andExpect(jsonPath("$[1].price").value(2000));
+        }
 
-    @Test
-    void testGetProductsNotLoggedIn() throws Exception {
-        when(messageSource.getMessage("error.not_logged_in", null, Locale.JAPANESE))
-                .thenReturn("ログインしていません");
+        @Test
+        void testGetProductsNotLoggedIn() throws Exception {
+                when(messageSource.getMessage("error.not_logged_in", null, Locale.JAPANESE))
+                                .thenReturn("ログインしていません");
 
-        mockMvc.perform(get("/api/products").locale(Locale.JAPANESE))
-                .andExpect(status().isUnauthorized())
-                .andExpect(result -> {
-                    Exception resolved = result.getResolvedException();
-                    assert resolved != null;
-                    assertEquals("ログインしていません", resolved.getMessage());
-                });
-    }
+                mockMvc.perform(get("/api/products").locale(Locale.JAPANESE))
+                                .andExpect(status().isUnauthorized())
+                                .andExpect(result -> {
+                                        Exception resolved = result.getResolvedException();
+                                        assert resolved != null;
+                                        assertEquals("ログインしていません", resolved.getMessage());
+                                });
+        }
 
-    @Test
-    void testRollbackSuccess() throws Exception {
-        doThrow(new RuntimeException()).when(productService).updateUserAndProductWithRollbackTest();
-        when(messageSource.getMessage("rollback.success", null, Locale.JAPANESE))
-                .thenReturn("ロールバック成功");
+        @Test
+        void testRollbackSuccess() throws Exception {
+                doThrow(new RuntimeException()).when(productService).updateUserAndProductWithRollbackTest();
+                when(messageSource.getMessage("rollback.success", null, Locale.JAPANESE))
+                                .thenReturn("ロールバック成功");
 
-        mockMvc.perform(post("/api/products/rollback").locale(Locale.JAPANESE))
-                .andExpect(status().isOk())
-                .andExpect(content().string("ロールバック成功"));
-    }
+                mockMvc.perform(post("/api/products/rollback").locale(Locale.JAPANESE))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("ロールバック成功"));
+        }
 
-    @Test
-    void testRollbackUnexpected() throws Exception {
-        doNothing().when(productService).updateUserAndProductWithRollbackTest();
-        when(messageSource.getMessage("rollback.unexpected", null, Locale.JAPANESE))
-                .thenReturn("ロールバックされませんでした");
+        @Test
+        void testRollbackUnexpected() throws Exception {
+                doNothing().when(productService).updateUserAndProductWithRollbackTest();
+                when(messageSource.getMessage("rollback.unexpected", null, Locale.JAPANESE))
+                                .thenReturn("ロールバックされませんでした");
 
-        mockMvc.perform(post("/api/products/rollback").locale(Locale.JAPANESE))
-                .andExpect(status().isOk())
-                .andExpect(content().string("ロールバックされませんでした"));
-    }
+                mockMvc.perform(post("/api/products/rollback").locale(Locale.JAPANESE))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("ロールバックされませんでした"));
+        }
 }

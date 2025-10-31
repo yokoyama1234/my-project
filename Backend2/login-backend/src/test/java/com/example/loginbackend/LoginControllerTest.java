@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Locale;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -110,4 +111,27 @@ class LoginControllerTest {
                                 .andExpect(jsonPath("$.message").value("ログインしていません"))
                                 .andExpect(jsonPath("$.name").doesNotExist());
         }
+
+        @Test
+        void testLoginException() throws Exception {
+                LoginRequest request = new LoginRequest();
+                request.setUserId("admin");
+                request.setPassword("password");
+
+                // loginService.login() が例外を投げる
+                when(loginService.login(anyString(), anyString()))
+                                .thenThrow(new RuntimeException("DB接続エラー"));
+
+                when(messageSource.getMessage("login.error", null, Locale.JAPANESE))
+                                .thenReturn("サーバエラーが発生しました");
+
+                mockMvc.perform(post("/api/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
+                                .andExpect(status().isInternalServerError())
+                                .andExpect(jsonPath("$.status").value(500))
+                                .andExpect(jsonPath("$.message").value("サーバエラーが発生しました"))
+                                .andExpect(jsonPath("$.userId").doesNotExist());
+        }
+
 }

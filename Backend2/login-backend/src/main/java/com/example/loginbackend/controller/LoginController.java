@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.context.MessageSource;
+
 import java.util.Locale;
 
 @RestController
@@ -21,18 +22,18 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
-        LoginRequest user = loginService.login(request.getUserId(), request.getPassword());
-        if (user != null) {
-            session.setAttribute("USER", user);
-            String msg = messageSource.getMessage("login.success", null, Locale.JAPANESE);
-
-            String displayName = user.getName() != null ? user.getName() : user.getUserId();
-
-            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), msg, displayName));
-        } else {
-            String msg = messageSource.getMessage("login.failure", null, Locale.JAPANESE);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new LoginResponse(HttpStatus.UNAUTHORIZED.value(), msg));
+        try {
+            LoginRequest user = loginService.login(request.getUserId(), request.getPassword());
+            if (user != null) {
+                session.setAttribute("USER", user);
+                return ResponseEntity.ok(buildLoginResponse(user, "login.success", HttpStatus.OK));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(buildLoginResponse(null, "login.failure", HttpStatus.UNAUTHORIZED));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(buildLoginResponse(null, "login.error", HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 
@@ -40,13 +41,17 @@ public class LoginController {
     public ResponseEntity<LoginResponse> me(HttpSession session) {
         LoginRequest user = (LoginRequest) session.getAttribute("USER");
         if (user != null) {
-            String msg = messageSource.getMessage("login.already_logged_in", null, Locale.JAPANESE);
-            String displayName = user.getName() != null ? user.getName() : user.getUserId();
-            return ResponseEntity.ok(new LoginResponse(HttpStatus.OK.value(), msg, displayName));
+            return ResponseEntity.ok(buildLoginResponse(user, "login.already_logged_in", HttpStatus.OK));
         } else {
-            String msg = messageSource.getMessage("login.not_logged_in", null, Locale.JAPANESE);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new LoginResponse(HttpStatus.UNAUTHORIZED.value(), msg));
+                    .body(buildLoginResponse(null, "login.not_logged_in", HttpStatus.UNAUTHORIZED));
         }
+    }
+
+    private LoginResponse buildLoginResponse(LoginRequest user, String messageKey, HttpStatus status) {
+        String msg = messageSource.getMessage(messageKey, null, Locale.JAPANESE);
+        String displayName = (user != null && user.getName() != null) ? user.getName()
+                : (user != null ? user.getUserId() : null);
+        return new LoginResponse(status.value(), msg, displayName);
     }
 }

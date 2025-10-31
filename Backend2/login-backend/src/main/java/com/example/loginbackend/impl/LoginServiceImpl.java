@@ -1,5 +1,6 @@
 package com.example.loginbackend.impl;
 
+import com.example.loginbackend.exception.UnauthorizedException;
 import com.example.loginbackend.mapper.LoginMapper;
 import com.example.loginbackend.model.LoginRequest;
 import com.example.loginbackend.service.LoginService;
@@ -14,6 +15,16 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public LoginRequest login(String userId, String password) {
-        return userMapper.findByUserIdAndPassword(userId, password);
+        try {
+            LoginRequest user = userMapper.findByUserIdAndPassword(userId, password);
+            if (user == null) {
+                throw new UnauthorizedException("ユーザーIDまたはパスワードが正しくありません");
+            }
+            return user;
+        } catch (UnauthorizedException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("ログイン処理中に予期せぬエラーが発生しました", e);
+        }
     }
 }
