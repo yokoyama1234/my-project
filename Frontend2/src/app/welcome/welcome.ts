@@ -35,8 +35,19 @@ export class WelcomeComponent implements OnInit {
       });
   }
 
-  logout() {
-    // ログアウト後にログイン画面へ
-    this.router.navigate(['/']);
-  }
+logout() {
+  // バックエンドのセッションを破棄
+  this.http.post('http://localhost:8080/api/logout', {}, { withCredentials: true })
+    .subscribe({
+      next: () => {
+        console.log('ログアウト成功');
+        this.router.navigate(['/']); // ログイン画面へ戻る
+      },
+      error: (err) => {
+        console.error('ログアウト失敗', err);
+        // 失敗してもログイン画面に戻す
+        this.router.navigate(['/']);
+      }
+    });
+}
 }

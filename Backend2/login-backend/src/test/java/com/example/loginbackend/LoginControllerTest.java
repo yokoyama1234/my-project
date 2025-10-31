@@ -5,6 +5,7 @@ import com.example.loginbackend.model.LoginRequest;
 import com.example.loginbackend.service.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,7 +18,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Locale;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -132,6 +135,31 @@ class LoginControllerTest {
                                 .andExpect(jsonPath("$.status").value(500))
                                 .andExpect(jsonPath("$.message").value("サーバエラーが発生しました"))
                                 .andExpect(jsonPath("$.userId").doesNotExist());
+        }
+
+        /** ログアウト成功 */
+        @Test
+        void testLogoutSuccess() throws Exception {
+                MockHttpSession session = new MockHttpSession();
+                when(messageSource.getMessage(eq("logout.success"), any(), any())).thenReturn("ログアウト成功");
+
+                mockMvc.perform(post("/api/logout").session(session))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.status").value("OK"))
+                                .andExpect(jsonPath("$.message").value("logout.success"));
+        }
+
+        /** ログアウト失敗（IllegalStateException発生） */
+        @Test
+        void testLogoutFailure() throws Exception {
+                // MockHttpSessionをSpy化してinvalidate()を例外にする
+                MockHttpSession session = Mockito.spy(new MockHttpSession());
+                Mockito.doThrow(new IllegalStateException()).when(session).invalidate();
+
+                mockMvc.perform(post("/api/logout").session(session))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                                .andExpect(jsonPath("$.message").value("logout.failure"));
         }
 
 }

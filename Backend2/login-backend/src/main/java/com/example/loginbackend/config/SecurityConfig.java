@@ -16,7 +16,9 @@ public class SecurityConfig {
                                 .cors(cors -> {
                                 })
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/api/login", "/api/products/**").permitAll()
+                                                .requestMatchers("/api/login", "/api/me", "/api/logout",
+                                                                "/api/products/**")
+                                                .permitAll()
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form.disable())
                                 .sessionManagement(session -> session
