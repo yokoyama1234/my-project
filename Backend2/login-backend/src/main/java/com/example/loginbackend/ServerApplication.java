@@ -21,7 +21,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  */
 @SpringBootApplication
-public class LoginBackendApplication {
+public class ServerApplication {
 
 	/**
 	 * アプリケーションを起動するメインメソッド。
@@ -29,6 +29,6 @@ public class LoginBackendApplication {
 	 * @param args コマンドライン引数
 	 */
 	public static void main(String[] args) {
-		SpringApplication.run(LoginBackendApplication.class, args);
+		SpringApplication.run(ServerApplication.class, args);
 	}
 }
