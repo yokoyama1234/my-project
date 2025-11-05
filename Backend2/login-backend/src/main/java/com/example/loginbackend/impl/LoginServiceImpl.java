@@ -40,7 +40,7 @@ public class LoginServiceImpl implements LoginService {
         try {
             LoginRequest user = userMapper.findByUserIdAndPassword(userId, password);
             if (user == null) {
-                throw new UnauthorizedException("ユーザーIDまたはパスワードが正しくありません");
+                throw new UnauthorizedException("error.message_not_found");
             }
             return user;
         } catch (UnauthorizedException e) {

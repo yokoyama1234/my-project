@@ -9,6 +9,11 @@ interface Product {
   price: number;
 }
 
+interface LogoutResponse {
+  status: number;
+  message: string;
+}
+
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.html',
@@ -36,18 +41,19 @@ export class WelcomeComponent implements OnInit {
   }
 
 logout() {
-  // バックエンドのセッションを破棄
-  this.http.post('http://localhost:8080/api/logout', {}, { withCredentials: true })
-    .subscribe({
-      next: () => {
-        console.log('ログアウト成功');
-        this.router.navigate(['/']); // ログイン画面へ戻る
-      },
-      error: (err) => {
-        console.error('ログアウト失敗', err);
-        // 失敗してもログイン画面に戻す
+  this.http.post<LogoutResponse>(
+    'http://localhost:8080/api/logout',{},{ withCredentials: true }
+  ).subscribe({
+    next: (res) => {
+      if (res.status === 200) {
         this.router.navigate(['/']);
+      } else {
+        console.error('ログアウト失敗:', res.message);
       }
-    });
+    },
+    error: (err) => {
+      console.error('通信エラー', err);
+    }
+  });
 }
 }

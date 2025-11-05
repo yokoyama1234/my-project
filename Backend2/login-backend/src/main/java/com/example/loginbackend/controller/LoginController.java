@@ -2,6 +2,7 @@ package com.example.loginbackend.controller;
 
 import com.example.loginbackend.model.LoginRequest;
 import com.example.loginbackend.model.LoginResponse;
+import com.example.loginbackend.model.LogoutResponse;
 import com.example.loginbackend.service.LoginService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.context.MessageSource;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.dao.DataAccessException;
+
 import java.util.Locale;
 
 /**
@@ -30,6 +32,9 @@ public class LoginController {
     /** メッセージプロパティからメッセージを取得するためのMessageSource */
     private final MessageSource messageSource;
 
+    /** ユーザー情報を格納するセッションキー */
+    public static final String USER = "USER";
+
     /**
      * ユーザーのログイン処理を行う。
      * <p>
@@ -42,18 +47,32 @@ public class LoginController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
+
+        LoginRequest user;
         try {
-            LoginRequest user = loginService.login(request.getUserId(), request.getPassword());
-            if (user != null) {
-                session.setAttribute("USER", user);
-                return ResponseEntity.ok(buildLoginResponse(user, "login.success", HttpStatus.OK));
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(buildLoginResponse(null, "login.failure", HttpStatus.UNAUTHORIZED));
-            }
-        } catch (Exception e) {
+            user = loginService.login(request.getUserId(), request.getPassword());
+        } catch (DataAccessException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(buildLoginResponse(null, "login.error", HttpStatus.INTERNAL_SERVER_ERROR));
+                    .body(buildLoginResponse(null, "login.db.error", HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(buildLoginResponse(null, "login.failure", HttpStatus.UNAUTHORIZED));
+        }
+
+        try {
+            session.setAttribute(USER, user);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(buildLoginResponse(null, "session.error", HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+
+        try {
+            return ResponseEntity.ok(buildLoginResponse(user, "login.success", HttpStatus.OK));
+        } catch (NoSuchMessageException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(buildLoginResponse(null, "error.message_not_found", HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 
@@ -78,30 +97,21 @@ public class LoginController {
     /**
      * ログアウト処理を行うエンドポイント。
      * <p>
-     * 現在のセッションを破棄し、ユーザーをログアウト状態にします。
-     * すでにセッションが無効な場合（例：二重ログアウトなど）は、
-     * IllegalStateExceptionをキャッチして適切なメッセージを返します。
+     * 現在のセッションを破棄（invalidate）し、ユーザーをログアウトさせます。<br>
+     * すでにセッションが無効な場合（例：二重ログアウトなど）は400を返します。
      * </p>
-     *
+     * 
      * @param session 現在のHTTPセッション
-     * @return ステータスコードとメッセージを含むレスポンス
-     *         <ul>
-     *         <li>成功時: 200, メッセージ「ログアウトしました」</li>
-     *         <li>すでにログアウト済み: 400, メッセージ「すでにログアウト済みです」</li>
-     *         </ul>
+     * @return {@link ResponseEntity} 型のレスポンス
      */
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, Object>> logout(HttpSession session) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<LogoutResponse> logout(HttpSession session) {
         try {
             session.invalidate();
-            response.put("status", HttpStatus.OK);
-            response.put("message", "logout.success");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(new LogoutResponse(HttpStatus.OK.value(), "logout.success"));
         } catch (IllegalStateException e) {
-            response.put("status", HttpStatus.BAD_REQUEST);
-            response.put("message", "logout.failure");
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new LogoutResponse(HttpStatus.BAD_REQUEST.value(), "logout.failure"));
         }
     }
 
@@ -115,8 +125,16 @@ public class LoginController {
      */
     private LoginResponse buildLoginResponse(LoginRequest user, String messageKey, HttpStatus status) {
         String msg = messageSource.getMessage(messageKey, null, Locale.JAPANESE);
-        String displayName = (user != null && user.getName() != null) ? user.getName()
-                : (user != null ? user.getUserId() : null);
+        String displayName = null;
+
+        if (user != null) {
+            if (user.getName() != null) {
+                displayName = user.getName();
+            } else {
+                displayName = user.getUserId();
+            }
+        }
+
         return new LoginResponse(status.value(), msg, displayName);
     }
 }

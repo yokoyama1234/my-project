@@ -30,6 +30,9 @@ public class ProductController {
     /** メッセージリソース（国際化対応メッセージを取得） */
     private final MessageSource messageSource;
 
+    /** ユーザー情報を格納するセッションキー */
+    public static final String USER = "USER";
+
     /**
      * 商品一覧を取得するエンドポイント。
      * <p>
@@ -84,7 +87,7 @@ public class ProductController {
      * @throws UnauthorizedException 未ログイン状態の場合に発生
      */
     private void checkAuthentication(HttpSession session, Locale locale) {
-        if (session.getAttribute("USER") == null) {
+        if (session.getAttribute(USER) == null) {
             String msg = messageSource.getMessage("error.not_logged_in", null, locale);
             throw new UnauthorizedException(msg);
         }

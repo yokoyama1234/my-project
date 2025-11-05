@@ -53,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Transactional
     public void updateUserAndProductWithRollbackTest() {
-        userMapper.updateUserName(1L, "管理者１");
-        productMapper.updateProductName(1L, "DB設定で上限10文字に設定");
+        userMapper.updateUserName(1L, "db.username");
+        productMapper.updateProductName(1L, "db.productname");
     }
 }
