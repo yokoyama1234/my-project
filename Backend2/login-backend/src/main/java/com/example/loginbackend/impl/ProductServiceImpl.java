@@ -28,6 +28,8 @@ public class ProductServiceImpl implements ProductService {
 
     /** ユーザー情報を操作するマッパー（テスト用の更新処理に使用） */
     private final LoginMapper userMapper;
+    private static final long TEST_USER_ID = 1L;
+    private static final long TEST_PRODUCT_ID = 1L;
 
     /**
      * 全商品の一覧を取得する。
@@ -53,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Transactional
     public void updateUserAndProductWithRollbackTest() {
-        userMapper.updateUserName(1L, "db.username");
-        productMapper.updateProductName(1L, "db.productname");
+        userMapper.updateUserName(TEST_USER_ID, "db.username");
+        productMapper.updateProductName(TEST_PRODUCT_ID, "db.productname");
     }
 }

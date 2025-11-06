@@ -1,5 +1,6 @@
 package com.example.loginbackend.controller;
 
+import com.example.loginbackend.constant.SessionConstants;
 import com.example.loginbackend.model.LoginRequest;
 import com.example.loginbackend.model.LoginResponse;
 import com.example.loginbackend.model.LogoutResponse;
@@ -32,9 +33,6 @@ public class LoginController {
     /** メッセージプロパティからメッセージを取得するためのMessageSource */
     private final MessageSource messageSource;
 
-    /** ユーザー情報を格納するセッションキー */
-    public static final String USER = "USER";
-
     /**
      * ユーザーのログイン処理を行う。
      * <p>
@@ -62,7 +60,7 @@ public class LoginController {
         }
 
         try {
-            session.setAttribute(USER, user);
+            session.setAttribute(SessionConstants.USER, user);
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(buildLoginResponse(null, "session.error", HttpStatus.INTERNAL_SERVER_ERROR));
@@ -85,7 +83,7 @@ public class LoginController {
      */
     @GetMapping("/me")
     public ResponseEntity<LoginResponse> me(HttpSession session) {
-        LoginRequest user = (LoginRequest) session.getAttribute("USER");
+        LoginRequest user = (LoginRequest) session.getAttribute(SessionConstants.USER);
         if (user != null) {
             return ResponseEntity.ok(buildLoginResponse(user, "login.already_logged_in", HttpStatus.OK));
         } else {

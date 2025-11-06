@@ -1,5 +1,6 @@
 package com.example.loginbackend.controller;
 
+import com.example.loginbackend.constant.SessionConstants;
 import com.example.loginbackend.exception.UnauthorizedException;
 import com.example.loginbackend.model.ProductResponse;
 import com.example.loginbackend.service.ProductService;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.DataAccessException;
 
 import java.util.List;
 import java.util.Locale;
@@ -29,9 +31,6 @@ public class ProductController {
 
     /** メッセージリソース（国際化対応メッセージを取得） */
     private final MessageSource messageSource;
-
-    /** ユーザー情報を格納するセッションキー */
-    public static final String USER = "USER";
 
     /**
      * 商品一覧を取得するエンドポイント。
@@ -65,14 +64,12 @@ public class ProductController {
     public ResponseEntity<String> testRollback(Locale locale) {
         try {
             productService.updateUserAndProductWithRollbackTest();
-            // ここに到達する場合は想定外（例外が発生しなかった）
-            String msg = messageSource.getMessage("rollback.unexpected", null, locale);
-            return ResponseEntity.ok(msg);
-        } catch (Exception e) {
-            // 例外発生時にトランザクションがロールバックされることを確認
+        } catch (DataAccessException | IllegalStateException e) {
             String msg = messageSource.getMessage("rollback.success", null, locale);
             return ResponseEntity.ok(msg);
         }
+        String msg = messageSource.getMessage("rollback.unexpected", null, locale);
+        return ResponseEntity.ok(msg);
     }
 
     /**
@@ -87,7 +84,7 @@ public class ProductController {
      * @throws UnauthorizedException 未ログイン状態の場合に発生
      */
     private void checkAuthentication(HttpSession session, Locale locale) {
-        if (session.getAttribute(USER) == null) {
+        if (session.getAttribute(SessionConstants.USER) == null) {
             String msg = messageSource.getMessage("error.not_logged_in", null, locale);
             throw new UnauthorizedException(msg);
         }

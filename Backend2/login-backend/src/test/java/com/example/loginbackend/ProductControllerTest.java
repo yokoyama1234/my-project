@@ -68,8 +68,10 @@ class ProductControllerTest {
         }
 
         @Test
-        void testRollbackSuccess() throws Exception {
-                doThrow(new RuntimeException()).when(productService).updateUserAndProductWithRollbackTest();
+        void testRollback_DataAccessException() throws Exception {
+                doThrow(new org.springframework.dao.DataAccessResourceFailureException("DB error"))
+                                .when(productService).updateUserAndProductWithRollbackTest();
+
                 when(messageSource.getMessage("rollback.success", null, Locale.JAPANESE))
                                 .thenReturn("ロールバック成功");
 
@@ -79,7 +81,20 @@ class ProductControllerTest {
         }
 
         @Test
-        void testRollbackUnexpected() throws Exception {
+        void testRollback_IllegalStateException() throws Exception {
+                doThrow(new IllegalStateException("不正状態"))
+                                .when(productService).updateUserAndProductWithRollbackTest();
+
+                when(messageSource.getMessage("rollback.success", null, Locale.JAPANESE))
+                                .thenReturn("ロールバック成功");
+
+                mockMvc.perform(post("/api/products/rollback").locale(Locale.JAPANESE))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("ロールバック成功"));
+        }
+
+        @Test
+        void testRollback_NoException() throws Exception {
                 doNothing().when(productService).updateUserAndProductWithRollbackTest();
                 when(messageSource.getMessage("rollback.unexpected", null, Locale.JAPANESE))
                                 .thenReturn("ロールバックされませんでした");
