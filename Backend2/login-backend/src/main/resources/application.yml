@@ -2,3 +2,21 @@ cors:
   mapping: "/api/**"
   allowed-origins:
     - "http://localhost:8081"
+  allowed-methods:
+    - "GET"
+    - "POST"
+  allowed-headers:
+    - "*"
+  allow-credentials: true
+
+security:
+  permit-all:
+    - "/api/login"
+    - "/api/me"
+    - "/api/logout"
+    - "/api/products/**"
+  session-policy: "IF_REQUIRED"
+
+message:
+  basename: "classpath:messages"
+  encoding: "UTF-8"

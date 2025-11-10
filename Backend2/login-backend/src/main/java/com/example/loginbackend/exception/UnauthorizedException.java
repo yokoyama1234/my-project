@@ -1,8 +1,5 @@
 package com.example.loginbackend.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 /**
  * 認証されていないアクセスが行われた場合にスローされる例外クラス。
  * <p>
@@ -21,13 +18,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @see org.springframework.web.bind.annotation.ResponseStatus
  * @see HttpStatus#UNAUTHORIZED
  */
-@ResponseStatus(HttpStatus.UNAUTHORIZED)
 public class UnauthorizedException extends RuntimeException {
 
     /**
      * 指定したメッセージを使用して新しい {@code UnauthorizedException} を生成します。
      *
-     * @param message エラーメッセージ（例：「ログインが必要です」など）
+     * @param message
      */
     public UnauthorizedException(String message) {
         super(message);

@@ -3,14 +3,14 @@ package com.example.loginbackend.config;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 import java.util.List;
 
 @Configuration
-@ConfigurationProperties(prefix = "cors")
+@ConfigurationProperties(prefix = "security")
 @Data
-public class CorsProperties {
-    private String mapping;
-    private List<String> allowedOrigins;
-    private List<String> allowedMethods;
+public class SecurityProperties {
+    private List<String> permitAll;
+    private SessionCreationPolicy sessionPolicy;
 }
