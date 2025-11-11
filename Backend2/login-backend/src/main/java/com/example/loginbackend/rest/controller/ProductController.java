@@ -3,15 +3,14 @@ package com.example.loginbackend.rest.controller;
 import com.example.loginbackend.domain.exception.UnauthorizedException;
 import com.example.loginbackend.domain.model.ProductResponse;
 import com.example.loginbackend.domain.service.ProductService;
-import com.example.loginbackend.rest.constant.SessionConstants;
-
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
+import com.example.loginbackend.domain.service.SessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataAccessException;
+import lombok.RequiredArgsConstructor;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,6 +29,9 @@ public class ProductController {
     /** 商品関連のビジネスロジックを提供するサービス */
     private final ProductService productService;
 
+    /** セッション管理サービス */
+    private final SessionService sessionService;
+
     /** メッセージリソース（国際化対応メッセージを取得） */
     private final MessageSource messageSource;
 
@@ -47,7 +49,11 @@ public class ProductController {
      */
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getProducts(HttpSession session, Locale locale) {
-        checkAuthentication(session, locale);
+        if (!sessionService.isLoggedIn(session)) {
+            String msg = messageSource.getMessage("error.not_logged_in", null, locale);
+            throw new UnauthorizedException(msg);
+        }
+
         List<ProductResponse> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
@@ -71,23 +77,5 @@ public class ProductController {
         }
         String msg = messageSource.getMessage("rollback.unexpected", null, locale);
         return ResponseEntity.ok(msg);
-    }
-
-    /**
-     * 認証チェックを行う内部メソッド。
-     * <p>
-     * セッション内にユーザー情報（"USER"属性）が存在しない場合は、
-     * 認証エラーとして401をスローします。
-     * </p>
-     *
-     * @param session 現在のHTTPセッション
-     * @param locale  メッセージ取得に使用するロケール
-     * @throws UnauthorizedException 未ログイン状態の場合に発生
-     */
-    private void checkAuthentication(HttpSession session, Locale locale) {
-        if (session.getAttribute(SessionConstants.USER) == null) {
-            String msg = messageSource.getMessage("error.not_logged_in", null, locale);
-            throw new UnauthorizedException(msg);
-        }
     }
 }

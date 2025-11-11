@@ -2,11 +2,10 @@ package com.example.loginbackend;
 
 import com.example.loginbackend.domain.model.LoginRequest;
 import com.example.loginbackend.domain.service.LoginService;
-import com.example.loginbackend.rest.constant.SessionConstants;
+import com.example.loginbackend.domain.service.SessionService;
 import com.example.loginbackend.rest.controller.LoginController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,7 +15,6 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Locale;
@@ -26,6 +24,13 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * {@link LoginController} の単体テストクラス。
+ * <p>
+ * セッション操作を {@link SessionService} に委譲しているため、
+ * 本テストでは SessionService を Mock 化して動作を検証します。
+ * </p>
+ */
 @WebMvcTest(LoginController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class LoginControllerTest {
@@ -41,6 +46,9 @@ class LoginControllerTest {
 
         @MockBean
         private MessageSource messageSource;
+
+        @MockBean
+        private SessionService sessionService;
 
         private final String FIXED_USER = "admin";
         private final String FIXED_PASS = "password";
@@ -60,6 +68,8 @@ class LoginControllerTest {
                                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
                                 .andExpect(jsonPath("$.message").value("ログイン成功"))
                                 .andExpect(jsonPath("$.name").value(FIXED_NAME));
+
+                verify(sessionService).setUser(any(), eq(request));
         }
 
         @Test
@@ -88,6 +98,8 @@ class LoginControllerTest {
                                 .content(objectMapper.writeValueAsString(request)))
                                 .andExpect(status().isUnauthorized())
                                 .andExpect(jsonPath("$.message").value("ユーザIDまたはパスワードが間違っています"));
+
+                verify(sessionService, never()).setUser(any(), any());
         }
 
         @Test
@@ -109,14 +121,11 @@ class LoginControllerTest {
         void testLoginSessionError() throws Exception {
                 LoginRequest request = new LoginRequest(1, FIXED_USER, FIXED_PASS, FIXED_NAME);
                 when(loginService.login(FIXED_USER, FIXED_PASS)).thenReturn(request);
+                doThrow(new IllegalStateException()).when(sessionService).setUser(any(), any());
                 when(messageSource.getMessage("session.error", null, Locale.JAPANESE))
                                 .thenReturn("セッションエラー");
 
-                MockHttpSession sessionSpy = Mockito.spy(new MockHttpSession());
-                doThrow(new IllegalStateException()).when(sessionSpy)
-                                .setAttribute(eq(SessionConstants.USER), any());
-
-                mockMvc.perform(post("/api/login").session(sessionSpy)
+                mockMvc.perform(post("/api/login")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                                 .andExpect(status().isInternalServerError())
@@ -142,12 +151,11 @@ class LoginControllerTest {
         @Test
         void testMeWhenLoggedIn() throws Exception {
                 LoginRequest user = new LoginRequest(1, FIXED_USER, FIXED_PASS, FIXED_NAME);
-                MockHttpSession session = new MockHttpSession();
-                session.setAttribute(SessionConstants.USER, user);
+                when(sessionService.getUser(any())).thenReturn(user);
                 when(messageSource.getMessage("login.already_logged_in", null, Locale.JAPANESE))
                                 .thenReturn("ログイン中");
 
-                mockMvc.perform(get("/api/me").session(session))
+                mockMvc.perform(get("/api/me"))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.message").value("ログイン中"))
                                 .andExpect(jsonPath("$.name").value(FIXED_NAME));
@@ -155,6 +163,7 @@ class LoginControllerTest {
 
         @Test
         void testMeWhenNotLoggedIn() throws Exception {
+                when(sessionService.getUser(any())).thenReturn(null);
                 when(messageSource.getMessage("login.not_logged_in", null, Locale.JAPANESE))
                                 .thenReturn("未ログイン");
 
@@ -165,19 +174,18 @@ class LoginControllerTest {
 
         @Test
         void testLogoutSuccess() throws Exception {
-                MockHttpSession session = new MockHttpSession();
+                doNothing().when(sessionService).invalidate(any());
 
-                mockMvc.perform(post("/api/logout").session(session))
+                mockMvc.perform(post("/api/logout"))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.message").value("logout.success"));
         }
 
         @Test
         void testLogoutFailure() throws Exception {
-                MockHttpSession session = Mockito.spy(new MockHttpSession());
-                doThrow(new IllegalStateException()).when(session).invalidate();
+                doThrow(new IllegalStateException()).when(sessionService).invalidate(any());
 
-                mockMvc.perform(post("/api/logout").session(session))
+                mockMvc.perform(post("/api/logout"))
                                 .andExpect(status().isBadRequest())
                                 .andExpect(jsonPath("$.message").value("logout.failure"));
         }

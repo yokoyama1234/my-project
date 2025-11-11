@@ -4,49 +4,36 @@ import com.example.loginbackend.domain.model.LoginRequest;
 import com.example.loginbackend.domain.model.LoginResponse;
 import com.example.loginbackend.domain.model.LogoutResponse;
 import com.example.loginbackend.domain.service.LoginService;
-import com.example.loginbackend.rest.constant.SessionConstants;
+import com.example.loginbackend.domain.service.SessionService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Locale;
 
 /**
- * ログイン機能を提供するコントローラクラス。
- * <p>
- * ユーザーのログイン、ログアウト、ログイン状態確認を行うAPIエンドポイントを提供します。
- * </p>
+ * ログイン・ログアウトAPIを提供するRESTコントローラ。
  */
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class LoginController {
 
-    /** ログイン関連の業務ロジックを提供するサービス */
     private final LoginService loginService;
-
-    /** メッセージプロパティからメッセージを取得するためのMessageSource */
     private final MessageSource messageSource;
+    private final SessionService sessionService;
 
     /**
-     * ユーザーのログイン処理を行う。
-     * <p>
-     * ユーザーIDとパスワードを検証し、認証に成功した場合はセッションにユーザー情報を保持します。
-     * </p>
-     *
-     * @param request ログインリクエスト（ユーザーID、パスワードを含む）
-     * @param session 現在のHTTPセッション
-     * @return ログイン結果を表す
+     * ログイン処理。
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
-
         LoginRequest user;
         try {
             user = loginService.login(request.getUserId(), request.getPassword());
@@ -61,14 +48,11 @@ public class LoginController {
         }
 
         try {
-            session.setAttribute(SessionConstants.USER, user);
+            sessionService.setUser(session, user);
+            return ResponseEntity.ok(buildLoginResponse(user, "login.success", HttpStatus.OK));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(buildLoginResponse(null, "session.error", HttpStatus.INTERNAL_SERVER_ERROR));
-        }
-
-        try {
-            return ResponseEntity.ok(buildLoginResponse(user, "login.success", HttpStatus.OK));
         } catch (NoSuchMessageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(buildLoginResponse(null, "error.message_not_found", HttpStatus.INTERNAL_SERVER_ERROR));
@@ -76,15 +60,12 @@ public class LoginController {
     }
 
     /**
-     * 現在ログイン中のユーザー情報を取得する。
-     *
-     * @param session 現在のHTTPセッション
-     * @return ログイン中のユーザー情報を含むレスポンス。
-     *         ログイン済みであればユーザー情報を返し、未ログインであれば401を返す。
+     * ログイン中のユーザー情報を取得。
      */
     @GetMapping("/me")
     public ResponseEntity<LoginResponse> me(HttpSession session) {
-        LoginRequest user = (LoginRequest) session.getAttribute(SessionConstants.USER);
+        LoginRequest user = sessionService.getUser(session);
+
         if (user != null) {
             return ResponseEntity.ok(buildLoginResponse(user, "login.already_logged_in", HttpStatus.OK));
         } else {
@@ -94,19 +75,12 @@ public class LoginController {
     }
 
     /**
-     * ログアウト処理を行うエンドポイント。
-     * <p>
-     * 現在のセッションを破棄（invalidate）し、ユーザーをログアウトさせます。<br>
-     * すでにセッションが無効な場合（例：二重ログアウトなど）は400を返します。
-     * </p>
-     * 
-     * @param session 現在のHTTPセッション
-     * @return {@link ResponseEntity} 型のレスポンス
+     * ログアウト処理。
      */
     @PostMapping("/logout")
     public ResponseEntity<LogoutResponse> logout(HttpSession session) {
         try {
-            session.invalidate();
+            sessionService.invalidate(session);
             return ResponseEntity.ok(new LogoutResponse(HttpStatus.OK.value(), "logout.success"));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
