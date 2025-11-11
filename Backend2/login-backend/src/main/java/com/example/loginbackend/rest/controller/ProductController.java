@@ -1,9 +1,10 @@
-package com.example.loginbackend.controller;
+package com.example.loginbackend.rest.controller;
 
-import com.example.loginbackend.constant.SessionConstants;
-import com.example.loginbackend.exception.UnauthorizedException;
-import com.example.loginbackend.model.ProductResponse;
-import com.example.loginbackend.service.ProductService;
+import com.example.loginbackend.domain.exception.UnauthorizedException;
+import com.example.loginbackend.domain.model.ProductResponse;
+import com.example.loginbackend.domain.service.ProductService;
+import com.example.loginbackend.rest.constant.SessionConstants;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

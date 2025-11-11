@@ -1,4 +1,4 @@
-package com.example.loginbackend.model;
+package com.example.loginbackend.domain.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

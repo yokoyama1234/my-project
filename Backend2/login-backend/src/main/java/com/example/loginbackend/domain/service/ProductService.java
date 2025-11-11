@@ -1,7 +1,8 @@
-package com.example.loginbackend.service;
+package com.example.loginbackend.domain.service;
 
-import com.example.loginbackend.model.ProductResponse;
 import java.util.List;
+
+import com.example.loginbackend.domain.model.ProductResponse;
 
 /**
  * 商品情報に関するビジネスロジックを提供するサービスインターフェース。
@@ -9,7 +10,7 @@ import java.util.List;
  * 実装クラスでは、商品一覧の取得やトランザクションを伴う更新処理などを提供します。
  * </p>
  *
- * @see com.example.loginbackend.impl.ProductServiceImpl
+ * @see com.example.loginbackend.domain.impl.ProductServiceImpl
  */
 public interface ProductService {
 

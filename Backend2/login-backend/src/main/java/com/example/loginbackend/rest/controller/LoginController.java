@@ -1,10 +1,11 @@
-package com.example.loginbackend.controller;
+package com.example.loginbackend.rest.controller;
 
-import com.example.loginbackend.constant.SessionConstants;
-import com.example.loginbackend.model.LoginRequest;
-import com.example.loginbackend.model.LoginResponse;
-import com.example.loginbackend.model.LogoutResponse;
-import com.example.loginbackend.service.LoginService;
+import com.example.loginbackend.domain.model.LoginRequest;
+import com.example.loginbackend.domain.model.LoginResponse;
+import com.example.loginbackend.domain.model.LogoutResponse;
+import com.example.loginbackend.domain.service.LoginService;
+import com.example.loginbackend.rest.constant.SessionConstants;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

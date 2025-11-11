@@ -1,7 +1,8 @@
-package com.example.loginbackend.aop;
+package com.example.loginbackend.rest.aop;
 
-import com.example.loginbackend.exception.UnauthorizedException;
-import com.example.loginbackend.model.LoginResponse;
+import com.example.loginbackend.domain.exception.UnauthorizedException;
+import com.example.loginbackend.domain.model.LoginResponse;
+
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;

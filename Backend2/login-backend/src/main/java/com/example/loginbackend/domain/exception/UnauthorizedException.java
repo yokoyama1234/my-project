@@ -1,4 +1,4 @@
-package com.example.loginbackend.exception;
+package com.example.loginbackend.domain.exception;
 
 /**
  * 認証されていないアクセスが行われた場合にスローされる例外クラス。

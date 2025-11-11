@@ -1,9 +1,10 @@
-package com.example.loginbackend.impl;
+package com.example.loginbackend.domain.impl;
 
-import com.example.loginbackend.mapper.ProductMapper;
-import com.example.loginbackend.mapper.LoginMapper;
-import com.example.loginbackend.service.ProductService;
-import com.example.loginbackend.model.ProductResponse;
+import com.example.loginbackend.domain.mapper.LoginMapper;
+import com.example.loginbackend.domain.mapper.ProductMapper;
+import com.example.loginbackend.domain.model.ProductResponse;
+import com.example.loginbackend.domain.service.ProductService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

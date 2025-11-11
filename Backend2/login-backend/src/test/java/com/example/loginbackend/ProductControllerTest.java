@@ -1,9 +1,10 @@
 package com.example.loginbackend;
 
-import com.example.loginbackend.controller.ProductController;
-import com.example.loginbackend.model.LoginRequest;
-import com.example.loginbackend.model.ProductResponse;
-import com.example.loginbackend.service.ProductService;
+import com.example.loginbackend.domain.model.LoginRequest;
+import com.example.loginbackend.domain.model.ProductResponse;
+import com.example.loginbackend.domain.service.ProductService;
+import com.example.loginbackend.rest.controller.ProductController;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;

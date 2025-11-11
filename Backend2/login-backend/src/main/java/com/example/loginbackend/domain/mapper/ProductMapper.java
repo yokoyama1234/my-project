@@ -1,9 +1,11 @@
-package com.example.loginbackend.mapper;
+package com.example.loginbackend.domain.mapper;
 
-import com.example.loginbackend.model.ProductResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import com.example.loginbackend.domain.model.ProductResponse;
+
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

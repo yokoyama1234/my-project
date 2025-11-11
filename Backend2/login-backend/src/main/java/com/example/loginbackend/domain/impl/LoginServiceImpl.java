@@ -1,9 +1,10 @@
-package com.example.loginbackend.impl;
+package com.example.loginbackend.domain.impl;
 
-import com.example.loginbackend.exception.UnauthorizedException;
-import com.example.loginbackend.mapper.LoginMapper;
-import com.example.loginbackend.model.LoginRequest;
-import com.example.loginbackend.service.LoginService;
+import com.example.loginbackend.domain.exception.UnauthorizedException;
+import com.example.loginbackend.domain.mapper.LoginMapper;
+import com.example.loginbackend.domain.model.LoginRequest;
+import com.example.loginbackend.domain.service.LoginService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

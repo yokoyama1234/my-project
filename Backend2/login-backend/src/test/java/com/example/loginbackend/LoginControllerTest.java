@@ -1,9 +1,9 @@
 package com.example.loginbackend;
 
-import com.example.loginbackend.constant.SessionConstants;
-import com.example.loginbackend.controller.LoginController;
-import com.example.loginbackend.model.LoginRequest;
-import com.example.loginbackend.service.LoginService;
+import com.example.loginbackend.domain.model.LoginRequest;
+import com.example.loginbackend.domain.service.LoginService;
+import com.example.loginbackend.rest.constant.SessionConstants;
+import com.example.loginbackend.rest.controller.LoginController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
