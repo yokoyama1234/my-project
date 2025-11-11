@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataAccessException;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Locale;
@@ -21,6 +21,7 @@ import java.util.Locale;
  * トランザクションのロールバックテスト用APIを提供します。
  * </p>
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
@@ -49,11 +50,13 @@ public class ProductController {
      */
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getProducts(HttpSession session, Locale locale) {
+        log.info("商品取得APIスタート");
         if (!sessionService.isLoggedIn(session)) {
+            log.error("商品取得API終了：失敗");
             String msg = messageSource.getMessage("error.not_logged_in", null, locale);
             throw new UnauthorizedException(msg);
         }
-
+        log.info("商品取得API終了：成功");
         List<ProductResponse> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
@@ -69,12 +72,15 @@ public class ProductController {
      */
     @PostMapping("/rollback")
     public ResponseEntity<String> testRollback(Locale locale) {
+        log.info("ロールバックAPIスタート");
         try {
             productService.updateUserAndProductWithRollbackTest();
         } catch (DataAccessException | IllegalStateException e) {
+            log.error("ロールバックAPI終了");
             String msg = messageSource.getMessage("rollback.success", null, locale);
             return ResponseEntity.ok(msg);
         }
+        log.info("ロールバックAPI終了");
         String msg = messageSource.getMessage("rollback.unexpected", null, locale);
         return ResponseEntity.ok(msg);
     }

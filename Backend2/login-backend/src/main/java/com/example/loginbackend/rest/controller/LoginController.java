@@ -8,8 +8,9 @@ import com.example.loginbackend.domain.service.SessionService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.Locale;
 /**
  * ログイン・ログアウトAPIを提供するRESTコントローラ。
  */
+@Slf4j
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -34,28 +36,35 @@ public class LoginController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
-        LoginRequest user;
+        log.info("ログインAPIスタート: userId={}", request.getUserId());
         try {
-            user = loginService.login(request.getUserId(), request.getPassword());
-        } catch (DataAccessException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(buildLoginResponse(null, "login.db.error", HttpStatus.INTERNAL_SERVER_ERROR));
-        }
+            LoginRequest user;
+            try {
+                user = loginService.login(request.getUserId(), request.getPassword());
+            } catch (DataAccessException e) {
+                log.error("DBエラー: userId={}", request.getUserId(), e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(buildLoginResponse(null, "login.db.error", HttpStatus.INTERNAL_SERVER_ERROR));
+            }
 
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(buildLoginResponse(null, "login.failure", HttpStatus.UNAUTHORIZED));
-        }
+            if (user == null) {
+                log.info("ログイン失敗: userId={}", request.getUserId());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(buildLoginResponse(null, "login.failure", HttpStatus.UNAUTHORIZED));
+            }
 
-        try {
-            sessionService.setUser(session, user);
-            return ResponseEntity.ok(buildLoginResponse(user, "login.success", HttpStatus.OK));
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(buildLoginResponse(null, "session.error", HttpStatus.INTERNAL_SERVER_ERROR));
-        } catch (NoSuchMessageException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(buildLoginResponse(null, "error.message_not_found", HttpStatus.INTERNAL_SERVER_ERROR));
+            try {
+                sessionService.setUser(session, user);
+                log.info("ログイン成功: userId={}", request.getUserId());
+                return ResponseEntity.ok(buildLoginResponse(user, "login.success", HttpStatus.OK));
+            } catch (IllegalStateException e) {
+                log.error("セッションエラー: userId={}", request.getUserId(), e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(buildLoginResponse(null, "session.error", HttpStatus.INTERNAL_SERVER_ERROR));
+            }
+
+        } finally {
+            log.info("ログインAPI終了: userId={}", request.getUserId());
         }
     }
 
@@ -65,10 +74,14 @@ public class LoginController {
     @GetMapping("/me")
     public ResponseEntity<LoginResponse> me(HttpSession session) {
         LoginRequest user = sessionService.getUser(session);
-
+        log.info("ログイン確認APIスタート");
         if (user != null) {
+            log.info("ログイン中");
+            log.info("ログイン確認API終了");
             return ResponseEntity.ok(buildLoginResponse(user, "login.already_logged_in", HttpStatus.OK));
         } else {
+            log.info("ログアウト済み");
+            log.info("ログイン確認API終了");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(buildLoginResponse(null, "login.not_logged_in", HttpStatus.UNAUTHORIZED));
         }
@@ -79,12 +92,17 @@ public class LoginController {
      */
     @PostMapping("/logout")
     public ResponseEntity<LogoutResponse> logout(HttpSession session) {
+        log.info("ログアウトAPIスタート");
         try {
             sessionService.invalidate(session);
+            log.info("ログアウト成功");
             return ResponseEntity.ok(new LogoutResponse(HttpStatus.OK.value(), "logout.success"));
         } catch (IllegalStateException e) {
+            log.error("ログアウト失敗", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new LogoutResponse(HttpStatus.BAD_REQUEST.value(), "logout.failure"));
+        } finally {
+            log.info("ログアウトAPI終了");
         }
     }
 
