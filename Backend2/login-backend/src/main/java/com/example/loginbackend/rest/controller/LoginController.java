@@ -37,32 +37,30 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
         log.info("ログインAPIスタート: userId={}", request.getUserId());
+
+        LoginRequest user;
         try {
-            LoginRequest user;
-            try {
-                user = loginService.login(request.getUserId(), request.getPassword());
-            } catch (DataAccessException e) {
-                log.error("DBエラー: userId={}", request.getUserId(), e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(buildLoginResponse(null, "login.db.error", HttpStatus.INTERNAL_SERVER_ERROR));
-            }
+            user = loginService.login(request.getUserId(), request.getPassword());
+        } catch (DataAccessException e) {
+            log.error("DBエラー: userId={}", request.getUserId(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(buildLoginResponse(null, "login.db.error", HttpStatus.INTERNAL_SERVER_ERROR));
+        }
 
-            if (user == null) {
-                log.info("ログイン失敗: userId={}", request.getUserId());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(buildLoginResponse(null, "login.failure", HttpStatus.UNAUTHORIZED));
-            }
+        if (user == null) {
+            log.info("ログイン失敗: userId={}", request.getUserId());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(buildLoginResponse(null, "login.failure", HttpStatus.UNAUTHORIZED));
+        }
 
-            try {
-                sessionService.setUser(session, user);
-                log.info("ログイン成功: userId={}", request.getUserId());
-                return ResponseEntity.ok(buildLoginResponse(user, "login.success", HttpStatus.OK));
-            } catch (IllegalStateException e) {
-                log.error("セッションエラー: userId={}", request.getUserId(), e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(buildLoginResponse(null, "session.error", HttpStatus.INTERNAL_SERVER_ERROR));
-            }
-
+        try {
+            sessionService.setUser(session, user);
+            log.info("ログイン成功: userId={}", request.getUserId());
+            return ResponseEntity.ok(buildLoginResponse(user, "login.success", HttpStatus.OK));
+        } catch (IllegalStateException e) {
+            log.error("セッションエラー: userId={}", request.getUserId(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(buildLoginResponse(null, "session.error", HttpStatus.INTERNAL_SERVER_ERROR));
         } finally {
             log.info("ログインAPI終了: userId={}", request.getUserId());
         }

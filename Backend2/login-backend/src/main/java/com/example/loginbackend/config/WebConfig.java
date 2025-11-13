@@ -1,20 +1,16 @@
-package com.example.loginbackend.rest.config;
+package com.example.loginbackend.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig {
 
     private final WebProperties webProperties;
-
-    @Autowired
-    public WebConfig(WebProperties webProperties) {
-        this.webProperties = webProperties;
-    }
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {

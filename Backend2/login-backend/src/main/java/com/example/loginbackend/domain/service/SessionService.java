@@ -1,6 +1,6 @@
 package com.example.loginbackend.domain.service;
 
-import com.example.loginbackend.rest.constant.SessionConstants;
+import com.example.loginbackend.constant.SessionConstants;
 import com.example.loginbackend.domain.model.LoginRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;

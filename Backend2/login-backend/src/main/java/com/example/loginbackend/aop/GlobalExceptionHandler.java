@@ -1,4 +1,4 @@
-package com.example.loginbackend.rest.aop;
+package com.example.loginbackend.aop;
 
 import com.example.loginbackend.domain.exception.UnauthorizedException;
 import com.example.loginbackend.domain.model.LoginResponse;

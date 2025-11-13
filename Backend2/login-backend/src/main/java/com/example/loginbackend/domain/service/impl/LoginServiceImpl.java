@@ -1,4 +1,4 @@
-package com.example.loginbackend.domain.impl;
+package com.example.loginbackend.domain.service.impl;
 
 import com.example.loginbackend.domain.exception.UnauthorizedException;
 import com.example.loginbackend.domain.mapper.LoginMapper;
