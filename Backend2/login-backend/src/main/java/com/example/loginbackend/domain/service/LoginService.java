@@ -9,7 +9,7 @@ import com.example.loginbackend.domain.model.LoginRequest;
  * 認証に成功した場合はユーザー情報を返却します。
  * </p>
  *
- * @see com.example.loginbackend.domain.service.impl.LoginServiceImpl
+ * @see com.example.loginbackend.domain.impl.LoginServiceImpl
  */
 public interface LoginService {
 

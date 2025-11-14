@@ -10,7 +10,7 @@ import com.example.loginbackend.domain.model.ProductResponse;
  * 実装クラスでは、商品一覧の取得やトランザクションを伴う更新処理などを提供します。
  * </p>
  *
- * @see com.example.loginbackend.domain.service.impl.ProductServiceImpl
+ * @see com.example.loginbackend.domain.impl.ProductServiceImpl
  */
 public interface ProductService {
 

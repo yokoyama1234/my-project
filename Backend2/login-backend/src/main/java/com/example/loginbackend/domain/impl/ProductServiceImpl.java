@@ -1,4 +1,4 @@
-package com.example.loginbackend.domain.service.impl;
+package com.example.loginbackend.domain.impl;
 
 import com.example.loginbackend.domain.mapper.LoginMapper;
 import com.example.loginbackend.domain.mapper.ProductMapper;

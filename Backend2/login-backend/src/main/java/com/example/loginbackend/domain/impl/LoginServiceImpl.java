@@ -1,4 +1,4 @@
-package com.example.loginbackend.domain.service.impl;
+package com.example.loginbackend.domain.impl;
 
 import com.example.loginbackend.domain.exception.UnauthorizedException;
 import com.example.loginbackend.domain.mapper.LoginMapper;
@@ -41,7 +41,7 @@ public class LoginServiceImpl implements LoginService {
         try {
             LoginRequest user = userMapper.findByUserIdAndPassword(userId, password);
             if (user == null) {
-                throw new UnauthorizedException("error.message_not_found");
+                throw new UnauthorizedException("login.failure");
             }
             return user;
         } catch (UnauthorizedException e) {
