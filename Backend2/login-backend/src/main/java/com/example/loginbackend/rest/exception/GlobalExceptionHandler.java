@@ -1,7 +1,8 @@
 package com.example.loginbackend.rest.exception;
 
 import com.example.loginbackend.domain.exception.UnauthorizedException;
-import com.example.loginbackend.domain.model.LoginResponse;
+import com.example.loginbackend.rest.model.LoginResponse;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;

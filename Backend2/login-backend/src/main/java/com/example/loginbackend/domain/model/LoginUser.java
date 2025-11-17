@@ -1,30 +1,16 @@
 package com.example.loginbackend.domain.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 /**
- * ログインリクエストを表すデータモデルクラス。
- * <p>
- * ユーザー認証やログイン処理で使用される
- * </p>
- *
- * <p>
- * 主に以下の情報を保持します：
- * </p>
- * <ul>
- * <li>ユーザーID</li>
- * <li>パスワード</li>
- * <li>ユーザー名</li>
- * <li>データベースのID（オプション）</li>
- * </ul>
+ * users テーブルに対応するドメインモデル
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
-
+public class LoginUser {
     /**
      * ユーザーを一意に識別するID（DBの主キー）
      */

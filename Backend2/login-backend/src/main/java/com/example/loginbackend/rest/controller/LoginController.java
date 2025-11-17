@@ -1,15 +1,15 @@
 package com.example.loginbackend.rest.controller;
 
-import com.example.loginbackend.domain.model.LoginRequest;
-import com.example.loginbackend.domain.model.LoginResponse;
-import com.example.loginbackend.domain.model.LogoutResponse;
+import com.example.loginbackend.domain.model.LoginUser;
 import com.example.loginbackend.domain.service.LoginService;
-import com.example.loginbackend.domain.service.SessionService;
+import com.example.loginbackend.rest.model.LoginRequest;
+import com.example.loginbackend.rest.model.LoginResponse;
+import com.example.loginbackend.rest.model.LogoutResponse;
+import com.example.loginbackend.rest.service.SessionService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Locale;
 
-/**
- * ログイン・ログアウトAPIを提供するRESTコントローラ。
- */
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -31,14 +28,11 @@ public class LoginController {
     private final MessageSource messageSource;
     private final SessionService sessionService;
 
-    /**
-     * ログイン処理。
-     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
         log.info("ログインAPIスタート: userId={}", request.getUserId());
 
-        LoginRequest user;
+        LoginUser user;
         try {
             user = loginService.login(request.getUserId(), request.getPassword());
         } catch (DataAccessException e) {
@@ -66,12 +60,10 @@ public class LoginController {
         }
     }
 
-    /**
-     * ログイン中のユーザー情報を取得。
-     */
     @GetMapping("/me")
     public ResponseEntity<LoginResponse> me(HttpSession session) {
-        LoginRequest user = sessionService.getUser(session);
+
+        LoginUser user = sessionService.getUser(session);
         log.info("ログイン確認APIスタート");
         if (user != null) {
             log.info("ログイン中");
@@ -85,9 +77,6 @@ public class LoginController {
         }
     }
 
-    /**
-     * ログアウト処理。
-     */
     @PostMapping("/logout")
     public ResponseEntity<LogoutResponse> logout(HttpSession session) {
         log.info("ログアウトAPIスタート");
@@ -104,24 +93,13 @@ public class LoginController {
         }
     }
 
-    /**
-     * レスポンスを構築する内部ヘルパーメソッド。
-     *
-     * @param user       ログインユーザー情報（存在しない場合はnull）
-     * @param messageKey メッセージキー（messages.propertiesから取得）
-     * @param status     HTTPステータス
-     * @return {@link LoginResponse} オブジェクト
-     */
-    private LoginResponse buildLoginResponse(LoginRequest user, String messageKey, HttpStatus status) {
+    // domain/model/LoginUser → REST DTO/LoginResponse に変換
+    private LoginResponse buildLoginResponse(LoginUser user, String messageKey, HttpStatus status) {
         String msg = messageSource.getMessage(messageKey, null, Locale.JAPANESE);
         String displayName = null;
 
         if (user != null) {
-            if (user.getName() != null) {
-                displayName = user.getName();
-            } else {
-                displayName = user.getUserId();
-            }
+            displayName = (user.getName() != null) ? user.getName() : user.getUserId();
         }
 
         return new LoginResponse(status.value(), msg, displayName);

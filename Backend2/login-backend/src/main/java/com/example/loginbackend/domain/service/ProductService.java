@@ -2,7 +2,7 @@ package com.example.loginbackend.domain.service;
 
 import java.util.List;
 
-import com.example.loginbackend.domain.model.ProductResponse;
+import com.example.loginbackend.domain.model.Product;
 
 /**
  * 商品情報に関するビジネスロジックを提供するサービスインターフェース。
@@ -10,16 +10,16 @@ import com.example.loginbackend.domain.model.ProductResponse;
  * 実装クラスでは、商品一覧の取得やトランザクションを伴う更新処理などを提供します。
  * </p>
  *
- * @see com.example.loginbackend.domain.impl.ProductServiceImpl
+ * @see com.example.loginbackend.domain.serviceimpl.ProductServiceImpl
  */
 public interface ProductService {
 
     /**
      * 全商品の一覧を取得する。
      *
-     * @return {@link ProductResponse} のリスト
+     * @return {@link Product} のリスト
      */
-    List<ProductResponse> getAllProducts();
+    List<Product> getAllProducts();
 
     /**
      * ユーザー名と商品名を更新するテスト用メソッド。

@@ -1,7 +1,8 @@
-package com.example.loginbackend.aop;
+package com.example.loginbackend.rest.aop;
 
-import com.example.loginbackend.annotation.SessionRequired;
 import com.example.loginbackend.domain.exception.UnauthorizedException;
+import com.example.loginbackend.rest.annotation.SessionRequired;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;

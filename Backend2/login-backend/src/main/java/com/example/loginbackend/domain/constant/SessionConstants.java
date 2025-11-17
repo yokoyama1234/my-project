@@ -1,4 +1,4 @@
-package com.example.loginbackend.constant;
+package com.example.loginbackend.domain.constant;
 
 /**
  * セッションで使用するキー名を管理する定数クラス。

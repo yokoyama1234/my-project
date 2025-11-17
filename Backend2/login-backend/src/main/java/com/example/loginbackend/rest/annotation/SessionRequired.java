@@ -1,4 +1,4 @@
-package com.example.loginbackend.annotation;
+package com.example.loginbackend.rest.annotation;
 
 import java.lang.annotation.*;
 

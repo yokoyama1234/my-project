@@ -1,8 +1,8 @@
-package com.example.loginbackend.domain.impl;
+package com.example.loginbackend.domain.serviceimpl;
 
-import com.example.loginbackend.domain.mapper.LoginMapper;
-import com.example.loginbackend.domain.mapper.ProductMapper;
-import com.example.loginbackend.domain.model.ProductResponse;
+import com.example.loginbackend.domain.model.Product;
+import com.example.loginbackend.domain.repository.ProductRepository;
+import com.example.loginbackend.domain.repository.LoginRepository;
 import com.example.loginbackend.domain.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,22 +24,29 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    /** 商品情報を操作するマッパー */
-    private final ProductMapper productMapper;
-
-    /** ユーザー情報を操作するマッパー（テスト用の更新処理に使用） */
-    private final LoginMapper userMapper;
-    private static final long TEST_USER_ID = 1L;
+    /** 商品情報を操作するリポジトリ */
+    private final ProductRepository productRepository;
     private static final long TEST_PRODUCT_ID = 1L;
+    /** ユーザー情報を操作するリポジトリ */
+    private final LoginRepository loginRepository;
+    private static final long TEST_USER_ID = 1L;
 
     /**
      * 全商品の一覧を取得する。
      *
-     * @return {@link ProductResponse} のリスト
+     * @return {@link Product} のリスト
      */
     @Override
-    public List<ProductResponse> getAllProducts() {
-        return productMapper.findAll();
+    public List<Product> getAllProducts() {
+
+        List<Product> products = productRepository.findAll();
+
+        return products.stream()
+                .map(p -> new Product(
+                        p.getId(),
+                        p.getName(),
+                        p.getPrice()))
+                .toList();
     }
 
     /**
@@ -56,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Transactional
     public void updateUserAndProductWithRollbackTest() {
-        userMapper.updateUserName(TEST_USER_ID, "db.username");
-        productMapper.updateProductName(TEST_PRODUCT_ID, "db.productname");
+        loginRepository.updateUserName(TEST_USER_ID, "db.username");
+        productRepository.updateProductName(TEST_PRODUCT_ID, "db.productname");
     }
 }

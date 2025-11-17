@@ -1,9 +1,10 @@
 package com.example.loginbackend.rest.controller;
 
 import com.example.loginbackend.domain.exception.UnauthorizedException;
-import com.example.loginbackend.domain.model.ProductResponse;
+import com.example.loginbackend.domain.model.Product;
 import com.example.loginbackend.domain.service.ProductService;
-import com.example.loginbackend.domain.service.SessionService;
+import com.example.loginbackend.rest.service.SessionService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.context.MessageSource;
@@ -49,7 +50,7 @@ public class ProductController {
      * @throws UnauthorizedException ログインしていない場合に発生
      */
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getProducts(HttpSession session, Locale locale) {
+    public ResponseEntity<List<Product>> getProducts(HttpSession session, Locale locale) {
         log.info("商品取得APIスタート");
         if (!sessionService.isLoggedIn(session)) {
             log.error("商品取得API終了：失敗");
@@ -57,7 +58,7 @@ public class ProductController {
             throw new UnauthorizedException(msg);
         }
         log.info("商品取得API終了：成功");
-        List<ProductResponse> products = productService.getAllProducts();
+        List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
 
