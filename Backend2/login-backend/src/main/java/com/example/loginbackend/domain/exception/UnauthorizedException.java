@@ -21,13 +21,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @see org.springframework.web.bind.annotation.ResponseStatus
  * @see HttpStatus#UNAUTHORIZED
  */
-@ResponseStatus(HttpStatus.UNAUTHORIZED)
+@ResponseStatus(HttpStatus.UNAUTHORIZED) // この例外が投げられたとき、レスポンスとして 401 を返すよう指定
 public class UnauthorizedException extends RuntimeException {
 
     /**
-     * 指定したメッセージを使用して新しい {@code UnauthorizedException} を生成します。
+     * メッセージを指定して {@code UnauthorizedException} を生成します。
+     * <p>
+     * 例外メッセージは API レスポンスの "message" フィールドとして返却される可能性があるため、
+     * クライアント側に伝わる文言として適切な内容にする必要があります。
+     * </p>
      *
-     * @param message
+     * @param message クライアントに返したい例外メッセージ
      */
     public UnauthorizedException(String message) {
         super(message);

@@ -25,14 +25,10 @@ public class LoginServiceImpl implements LoginService {
      */
     @Override
     public User login(String userId, String password) {
-        try {
-            User user = loginRepository.findByUserIdAndPassword(userId, password);
-            if (user == null) {
-                throw new UnauthorizedException("login.failure");
-            }
-            return user;
-        } catch (UnauthorizedException e) {
-            throw e;
+        User user = loginRepository.findByUserIdAndPassword(userId, password);
+        if (user == null) {
+            throw new UnauthorizedException("login.failure");
         }
+        return user;
     }
 }

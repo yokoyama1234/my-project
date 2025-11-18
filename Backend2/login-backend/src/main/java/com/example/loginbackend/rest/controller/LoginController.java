@@ -18,6 +18,22 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Locale;
 
+/**
+ * ログイン関連の REST API を提供するコントローラ。
+ * <p>
+ * 主な機能:
+ * <ul>
+ * <li>ログイン（/api/login）</li>
+ * <li>ログイン状態確認（/api/me）</li>
+ * <li>ログアウト（/api/logout）</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * セッション管理は {@link SessionService} を介して行い、
+ * メッセージ文言は {@link MessageSource} から取得して国際化に対応しています。
+ * </p>
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -28,6 +44,13 @@ public class LoginController {
     private final MessageSource messageSource;
     private final SessionService sessionService;
 
+    /**
+     * ユーザーのログイン処理を行う。
+     * 
+     * @param request LoginRequest（userId / password）
+     * @param session 現在の HttpSession
+     * @return ログイン結果を含む ResponseEntity
+     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
         log.info("ログインAPIスタート: userId={}", request.getUserId());
@@ -60,11 +83,18 @@ public class LoginController {
         }
     }
 
+    /**
+     * 現在のセッションのログイン状態を返す。
+     *
+     * @param session 現在の HttpSession
+     * @return ログイン済みならユーザー情報、未ログインなら 401
+     */
     @GetMapping("/me")
     public ResponseEntity<LoginResponse> me(HttpSession session) {
 
-        User user = sessionService.getUser(session);
         log.info("ログイン確認APIスタート");
+        User user = sessionService.getUser(session);
+
         if (user != null) {
             log.info("ログイン中");
             log.info("ログイン確認API終了");
@@ -77,6 +107,12 @@ public class LoginController {
         }
     }
 
+    /**
+     * 現在のセッションを無効化してログアウトする。
+     *
+     * @param session 現在の HttpSession
+     * @return ログアウト結果を含む ResponseEntity
+     */
     @PostMapping("/logout")
     public ResponseEntity<LogoutResponse> logout(HttpSession session) {
         log.info("ログアウトAPIスタート");
@@ -93,7 +129,14 @@ public class LoginController {
         }
     }
 
-    // domain/model/LoginUser → REST DTO/LoginResponse に変換
+    /**
+     * User ドメインモデルを REST 用 DTO に変換してレスポンス生成。
+     *
+     * @param user       ログインユーザー（null の場合もあり）
+     * @param messageKey メッセージリソースのキー
+     * @param status     HTTP ステータス
+     * @return LoginResponse DTO
+     */
     private LoginResponse buildLoginResponse(User user, String messageKey, HttpStatus status) {
         String msg = messageSource.getMessage(messageKey, null, Locale.JAPANESE);
         String displayName = null;

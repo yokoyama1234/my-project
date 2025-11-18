@@ -26,9 +26,14 @@ public class ProductServiceImpl implements ProductService {
 
     /** 商品情報を操作するリポジトリ */
     private final ProductRepository productRepository;
+
+    /** テスト用に使用する商品ID（DB上に存在することを前提） */
     private static final long TEST_PRODUCT_ID = 1L;
+
     /** ユーザー情報を操作するリポジトリ */
     private final LoginRepository loginRepository;
+
+    /** テスト用に使用するユーザーID（DB上に存在することを前提） */
     private static final long TEST_USER_ID = 1L;
 
     /**
@@ -38,14 +43,8 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public List<Product> getAllProducts() {
-
-        List<Product> products = productRepository.findAll();
-
-        return products.stream()
-                .map(p -> new Product(
-                        p.getId(),
-                        p.getName(),
-                        p.getPrice()))
+        return productRepository.findAll().stream()
+                .map(product -> new Product(product.getId(), product.getName(), product.getPrice()))
                 .toList();
     }
 
