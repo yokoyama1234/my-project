@@ -1,4 +1,4 @@
-package com.example.loginbackend.rest.exception;
+package com.example.loginbackend.rest.handler;
 
 import com.example.loginbackend.domain.exception.UnauthorizedException;
 import com.example.loginbackend.rest.model.LoginResponse;
