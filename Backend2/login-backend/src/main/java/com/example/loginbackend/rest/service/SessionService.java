@@ -1,6 +1,6 @@
 package com.example.loginbackend.rest.service;
 
-import com.example.loginbackend.domain.model.LoginUser;
+import com.example.loginbackend.domain.model.User;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class SessionService {
      * @param session 現在のHTTPセッション
      * @param user    ログインしたユーザー情報
      */
-    public void setUser(HttpSession session, LoginUser user) {
+    public void setUser(HttpSession session, User user) {
         session.setAttribute(USER, user);
     }
 
@@ -33,9 +33,9 @@ public class SessionService {
      * @param session 現在のHTTPセッション
      * @return ログイン中のユーザー情報、または null
      */
-    public LoginUser getUser(HttpSession session) {
+    public User getUser(HttpSession session) {
         Object userObj = session.getAttribute(USER);
-        return (userObj instanceof LoginUser) ? (LoginUser) userObj : null;
+        return (userObj instanceof User) ? (User) userObj : null;
     }
 
     /**

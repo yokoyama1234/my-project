@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginUser {
+public class User {
     /**
      * ユーザーを一意に識別するID（DBの主キー）
      */

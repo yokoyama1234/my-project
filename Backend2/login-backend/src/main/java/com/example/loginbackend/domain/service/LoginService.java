@@ -1,6 +1,6 @@
 package com.example.loginbackend.domain.service;
 
-import com.example.loginbackend.domain.model.LoginUser;
+import com.example.loginbackend.domain.model.User;
 
 /**
  * ユーザーのログイン認証処理を提供するサービスインターフェース。
@@ -18,8 +18,8 @@ public interface LoginService {
      *
      * @param userId   ログインに使用するユーザーID
      * @param password ログインに使用するパスワード
-     * @return 認証に成功した場合は {@link LoginUser} オブジェクト
+     * @return 認証に成功した場合は {@link User} オブジェクト
      * @throws com.example.loginbackend.domain.exception.UnauthorizedException
      */
-    LoginUser login(String userId, String password);
+    User login(String userId, String password);
 }

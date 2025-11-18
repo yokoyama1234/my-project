@@ -1,6 +1,6 @@
 package com.example.loginbackend;
 
-import com.example.loginbackend.domain.model.LoginUser;
+import com.example.loginbackend.domain.model.User;
 import com.example.loginbackend.domain.service.LoginService;
 import com.example.loginbackend.rest.controller.LoginController;
 import com.example.loginbackend.rest.model.LoginRequest;
@@ -72,7 +72,7 @@ class LoginControllerTest {
         @Test
         @DisplayName("正常系：ログイン成功")
         void testLoginSuccess() throws Exception {
-            LoginUser user = mock(LoginUser.class);
+            User user = mock(User.class);
             when(user.getName()).thenReturn(FIXED_NAME);
             when(user.getUserId()).thenReturn(FIXED_USER);
 
@@ -95,7 +95,7 @@ class LoginControllerTest {
         @Test
         @DisplayName("正常系：name が null の場合 userId を使用")
         void testLoginSuccessWithNullName() throws Exception {
-            LoginUser user = mock(LoginUser.class);
+            User user = mock(User.class);
             when(user.getName()).thenReturn(null);
             when(user.getUserId()).thenReturn(FIXED_USER);
 
@@ -145,7 +145,7 @@ class LoginControllerTest {
         @Test
         @DisplayName("異常系：セッション設定時エラー")
         void testLoginSessionError() throws Exception {
-            LoginUser user = mock(LoginUser.class);
+            User user = mock(User.class);
             when(user.getName()).thenReturn(FIXED_NAME);
             when(user.getUserId()).thenReturn(FIXED_USER);
 
@@ -173,7 +173,7 @@ class LoginControllerTest {
         @Test
         @DisplayName("正常系：ログイン中のユーザー情報取得")
         void testMeWhenLoggedIn() throws Exception {
-            LoginUser user = mock(LoginUser.class);
+            User user = mock(User.class);
             when(user.getName()).thenReturn(FIXED_NAME);
             when(user.getUserId()).thenReturn(FIXED_USER);
 

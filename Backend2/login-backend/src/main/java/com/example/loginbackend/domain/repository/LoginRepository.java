@@ -4,10 +4,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.stereotype.Repository;
 
-import com.example.loginbackend.domain.model.LoginUser;
+import com.example.loginbackend.domain.model.User;
 
 /**
  * ログイン関連のデータアクセスを担当するリポジトリ
@@ -21,7 +20,7 @@ public interface LoginRepository {
          * ユーザーIDとパスワードでユーザー情報を取得
          */
         @Select("SELECT user_id, name, password FROM users WHERE user_id = #{userId} AND password = #{password}")
-        LoginUser findByUserIdAndPassword(@Param("userId") String userId,
+        User findByUserIdAndPassword(@Param("userId") String userId,
                         @Param("password") String password);
 
         /**

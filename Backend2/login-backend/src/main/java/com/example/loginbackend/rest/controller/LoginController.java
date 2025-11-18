@@ -1,6 +1,6 @@
 package com.example.loginbackend.rest.controller;
 
-import com.example.loginbackend.domain.model.LoginUser;
+import com.example.loginbackend.domain.model.User;
 import com.example.loginbackend.domain.service.LoginService;
 import com.example.loginbackend.rest.model.LoginRequest;
 import com.example.loginbackend.rest.model.LoginResponse;
@@ -32,7 +32,7 @@ public class LoginController {
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpSession session) {
         log.info("ログインAPIスタート: userId={}", request.getUserId());
 
-        LoginUser user;
+        User user;
         try {
             user = loginService.login(request.getUserId(), request.getPassword());
         } catch (DataAccessException e) {
@@ -63,7 +63,7 @@ public class LoginController {
     @GetMapping("/me")
     public ResponseEntity<LoginResponse> me(HttpSession session) {
 
-        LoginUser user = sessionService.getUser(session);
+        User user = sessionService.getUser(session);
         log.info("ログイン確認APIスタート");
         if (user != null) {
             log.info("ログイン中");
@@ -94,7 +94,7 @@ public class LoginController {
     }
 
     // domain/model/LoginUser → REST DTO/LoginResponse に変換
-    private LoginResponse buildLoginResponse(LoginUser user, String messageKey, HttpStatus status) {
+    private LoginResponse buildLoginResponse(User user, String messageKey, HttpStatus status) {
         String msg = messageSource.getMessage(messageKey, null, Locale.JAPANESE);
         String displayName = null;
 
