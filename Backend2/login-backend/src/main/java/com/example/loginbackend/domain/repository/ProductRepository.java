@@ -1,29 +1,32 @@
 package com.example.loginbackend.domain.repository;
 
-import com.example.loginbackend.domain.mapper.ProductMapper;
-import com.example.loginbackend.domain.model.Product;
-import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
+
+import com.example.loginbackend.domain.model.Product;
 
 import java.util.List;
 
+/**
+ * 商品関連のデータアクセスを担当するリポジトリ
+ * MyBatis アノテーションを直接使用し、Mapper を分離しない構成
+ */
 @Repository
-@RequiredArgsConstructor
-public class ProductRepository {
-
-    private final ProductMapper productMapper;
+@Mapper
+public interface ProductRepository {
 
     /**
-     * 全商品の一覧を取得
+     * すべての商品情報を取得
      */
-    public List<Product> findAll() {
-        return productMapper.findAll();
-    }
+    @Select("SELECT id, name, price FROM products")
+    List<Product> findAll();
 
     /**
-     * 商品名を更新
+     * 指定した商品IDの名前を更新
      */
-    public int updateProductName(Long id, String name) {
-        return productMapper.updateProductName(id, name);
-    }
+    @Update("UPDATE products SET name = #{name} WHERE id = #{id}")
+    int updateProductName(@Param("id") Long id, @Param("name") String name);
 }
