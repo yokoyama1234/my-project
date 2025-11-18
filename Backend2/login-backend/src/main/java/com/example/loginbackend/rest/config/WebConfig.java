@@ -1,4 +1,4 @@
-package com.example.loginbackend.config;
+package com.example.loginbackend.rest.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
